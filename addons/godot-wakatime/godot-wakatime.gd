@@ -48,10 +48,13 @@ func getCurrentCpuPlatform():
 			wakatimeExePath = currentUser + "/../../../../../.wakatime/wakatime-cli-windows-amd64.exe"
 		elif cpuArch == "arm64":
 			wakatimeExePath = currentUser + "/../../../../../.wakatime/wakatime-cli-windows-arm64.exe"
-	elif currentOs == "Darwin":
-		print("darwin")
+	elif currentOs == "macOS":
+		if cpuArch == "x86_64":
+			wakatimeExePath = currentUser + "/../../../../../.wakatime/wakatime-cli-darwin-amd64"
+		elif cpuArch == "arm64":
+			wakatimeExePath = currentUser + "/../../../../../.wakatime/wakatime-cli-darwin-arm64"
 	elif currentUser == "Linux":
-		print("Linux")
+		print("Fuck Linux")
 
 func detectActivity():
 	activeTime = Time.get_unix_time_from_system()
