@@ -107,8 +107,8 @@ func detectActivity():
 		print("Skipping")
 
 
-func updateCurrentTime():
-	activeTime = Time.get_unix_time_from_system()
+func updateCurrentTime(_unused = null):
+    activeTime = Time.get_unix_time_from_system()
 
 
 func startTimer():
