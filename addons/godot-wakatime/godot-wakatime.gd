@@ -108,7 +108,7 @@ func detectActivity():
 
 
 func updateCurrentTime(_unused = null):
-    activeTime = Time.get_unix_time_from_system()
+	activeTime = Time.get_unix_time_from_system()
 
 
 func startTimer():
