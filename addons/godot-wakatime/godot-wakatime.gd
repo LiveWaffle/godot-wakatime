@@ -98,7 +98,7 @@ func getCurrentCpuPlatform():
 		elif cpuArch == "arm64":
 			wakatimeExePath = currentUser + "/../../../../../.wakatime/wakatime-cli-darwin-arm64"
 	elif currentOs == "Linux":
-		print("Fuck Linux")
+		print("Linux will be fixed later.")
 
 func detectActivity():
 	if Time.get_unix_time_from_system() - activeTime < inactiveTime:
@@ -143,9 +143,6 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	updateCurrentTime()
 	return 0
 	
-
-
-# i fucking hate godot what is this language
 
 func _exit_tree() -> void:
 	scene_changed.disconnect(updateCurrentTime)
