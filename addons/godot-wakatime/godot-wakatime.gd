@@ -60,20 +60,7 @@ func sendHeartBeat():
 	var lineNumber = cursorPos[0]
 	var columnNumber = cursorPos[1]
 	var totalLines = cursorPos[2]
-	print("The Current cursor position is "+ currentCurPosition)
-	var args = ["--key", API_KEY,
-				"--entity", projectName, 
-				"--time", str(currentTime), 
-				"--write", "--plugin", 
-				"godot-wakatime/0.0.1", 
-				"--alternate-project", projectName, 
-				"--category", "designing", 
-				"--language", "Godot", 
-				"--is-unsaved-entity", 
-				"--cursorpos", str(columnNumber), 
-				"--lineno", str(lineNumber), 
-				"-lines", totalLines]
-
+	var args = ["--key", API_KEY,"--entity", projectName, "--time", str(currentTime), "--write", "--plugin", "godot-wakatime/0.0.1", "--alternate-project", projectName, "--category", "designing", "--language", "Godot", "--is-unsaved-entity", "--cursorpos", str(columnNumber), "--lineno", str(lineNumber), "--lines-in-file", str(totalLines),"--verbose"]
 	print(args)
 	OS.execute(wakatimeExe, args, output, true)
 	#print(output)
