@@ -61,11 +61,12 @@ func sendHeartBeat():
 	var lineNumber = cursorPos[0]
 	var columnNumber = cursorPos[1]
 	var totalLines = cursorPos[2]
-	var args = ["--key", API_KEY,"--entity", projectName, "--time", str(currentTime), "--write", "--plugin", "godot-wakatime/0.0.1", "--alternate-project", projectName, "--language", "Godot", "--is-unsaved-entity", "--cursorpos", str(columnNumber), "--lineno", str(lineNumber), "--lines-in-file", str(totalLines),"--verbose"]
 	var category = "building" if sceneMode else "coding"
+	var args = ["--key", API_KEY,"--entity", projectName, "--time", str(currentTime), "--write", "--plugin", "godot-wakatime/0.0.1", "--alternate-project", projectName, "--language", "Godot", "--is-unsaved-entity", "--cursorpos", str(columnNumber), "--lineno", str(lineNumber), "--lines-in-file", str(totalLines),"--verbose"]
 	args += ["--category", category]
 	print(args)
 	OS.execute(wakatimeExe, args, output, true)
+	sceneMode = false
 	#print(output)
 	print(wakatimeExePath)
 	
@@ -113,9 +114,10 @@ func startTimer():
 func updateMode():
 	var editor = get_editor_interface().get_script_editor()
 	if editor.get_current_script():
-		scriptActive()
+		sceneMode = false
 	else:
-		sceneActive()
+		pass
+
 func sceneChangeLog():
 	print("Scene Changed")
 
@@ -142,13 +144,17 @@ func _enter_tree() -> void:
 	pass
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
+	if event is InputEventMouseButton and event.pressed:
+		sceneMode = true
 	updateCurrentTime()
-	updateMode()
 	return false
+
 func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
+	if event is InputEventMouseButton and event.pressed:
+		sceneMode = true
 	updateCurrentTime()
-	updateMode()
 	return 0
+	
 func _unhandled_key_input(event: InputEvent) -> void:
 	updateCurrentTime()
 	updateMode()
