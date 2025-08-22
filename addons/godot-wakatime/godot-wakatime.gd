@@ -129,6 +129,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	updateCurrentTime()
 	return 0
+func _unhandled_key_input(event: InputEvent) -> void:
+	updateCurrentTime()
 	
 
 func _exit_tree() -> void:
