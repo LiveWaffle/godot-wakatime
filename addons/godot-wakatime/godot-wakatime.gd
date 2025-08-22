@@ -1,6 +1,6 @@
 @tool
 extends EditorPlugin
-
+var sceneMode: bool = false
 var API_KEY = ""
 var wakatimeExePath = ""
 var currentUser = OS.get_user_data_dir()
@@ -38,6 +38,7 @@ func findTextEditRecursive(node: Node) -> TextEdit:
 	return null
 
 func sendHeartBeat():
+	updateMode()
 	var projectName = ProjectSettings.get_setting("application/config/name")
 	# this goes all the way back to the user directory idk it was easier this way
 	var wakatimeExe = wakatimeExePath.simplify_path()
@@ -60,7 +61,9 @@ func sendHeartBeat():
 	var lineNumber = cursorPos[0]
 	var columnNumber = cursorPos[1]
 	var totalLines = cursorPos[2]
-	var args = ["--key", API_KEY,"--entity", projectName, "--time", str(currentTime), "--write", "--plugin", "godot-wakatime/0.0.1", "--alternate-project", projectName, "--category", "designing", "--language", "Godot", "--is-unsaved-entity", "--cursorpos", str(columnNumber), "--lineno", str(lineNumber), "--lines-in-file", str(totalLines),"--verbose"]
+	var args = ["--key", API_KEY,"--entity", projectName, "--time", str(currentTime), "--write", "--plugin", "godot-wakatime/0.0.1", "--alternate-project", projectName, "--language", "Godot", "--is-unsaved-entity", "--cursorpos", str(columnNumber), "--lineno", str(lineNumber), "--lines-in-file", str(totalLines),"--verbose"]
+	var category = "building" if sceneMode else "coding"
+	args += ["--category", category]
 	print(args)
 	OS.execute(wakatimeExe, args, output, true)
 	#print(output)
@@ -106,15 +109,30 @@ func startTimer():
 		timer.autostart = true
 		add_child(timer)
 		timer.timeout.connect(detectActivity)
-
+		
+func updateMode():
+	var editor = get_editor_interface().get_script_editor()
+	if editor.get_current_script():
+		scriptActive()
+	else:
+		sceneActive()
 func sceneChangeLog():
 	print("Scene Changed")
 
+func sceneActive():
+	sceneMode = true
+	print("SceneActive")
+func scriptActive():
+	sceneMode = false
+	print("CodeActive")
 
 func _enter_tree() -> void:
 	scene_changed.connect(updateCurrentTime)
 	scene_saved.connect(updateCurrentTime)
+	scene_changed.connect(sceneActive)
+	scene_saved.connect(sceneActive)
 	script_changed.connect(updateCurrentTime)
+	script_changed.connect(scriptActive)
 	project_settings_changed.connect(updateCurrentTime)
 	resource_saved.connect(updateCurrentTime)
 	main_screen_changed.connect(updateCurrentTime)
@@ -125,17 +143,23 @@ func _enter_tree() -> void:
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	updateCurrentTime()
+	updateMode()
 	return false
 func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	updateCurrentTime()
+	updateMode()
 	return 0
 func _unhandled_key_input(event: InputEvent) -> void:
 	updateCurrentTime()
+	updateMode()
 	
 
 func _exit_tree() -> void:
 	scene_changed.disconnect(updateCurrentTime)
 	scene_saved.disconnect(updateCurrentTime)
+	scene_changed.disconnect(sceneActive)
+	scene_saved.disconnect(sceneActive)
+	script_changed.disconnect(scriptActive)
 	script_changed.disconnect(updateCurrentTime)
 	project_settings_changed.disconnect(updateCurrentTime)
 	resource_saved.disconnect(updateCurrentTime)
